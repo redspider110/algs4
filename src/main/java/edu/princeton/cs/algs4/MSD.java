@@ -27,6 +27,10 @@
 
 package edu.princeton.cs.algs4;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 /**
  *  The {@code MSD} class provides static methods for sorting an
  *  array of extended ASCII strings or integers using MSD radix sort.
@@ -216,6 +220,13 @@ public class MSD {
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
+        if (args != null && args[0] != null){
+            try {
+                StdIn.setScanner(new Scanner(new File(args[0])));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
         String[] a = StdIn.readAllStrings();
         int n = a.length;
         sort(a);

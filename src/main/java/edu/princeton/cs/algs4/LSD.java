@@ -29,6 +29,10 @@
 
 package edu.princeton.cs.algs4;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 /**
  *  The {@code LSD} class provides static methods for sorting an
  *  array of <em>w</em>-character strings or 32-bit integers using LSD radix sort.
@@ -137,6 +141,13 @@ public class LSD {
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
+        if (args != null && args[0] != null){
+            try {
+                StdIn.setScanner(new Scanner(new File(args[0])));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
         String[] a = StdIn.readAllStrings();
         int n = a.length;
 

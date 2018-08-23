@@ -25,7 +25,10 @@
 
 package edu.princeton.cs.algs4;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 /**
  *  The {@code BST} class represents an ordered symbol table of generic
@@ -528,6 +531,14 @@ public class BST<Key extends Comparable<Key>, Value> {
      */
     public static void main(String[] args) { 
         BST<String, Integer> st = new BST<String, Integer>();
+        if (args != null && args[0] != null){
+             try {
+                     StdIn.setScanner(new Scanner(new File(args[0])));
+                 } catch (FileNotFoundException e) {
+                     e.printStackTrace();
+                 }
+         }
+
         for (int i = 0; !StdIn.isEmpty(); i++) {
             String key = StdIn.readString();
             st.put(key, i);

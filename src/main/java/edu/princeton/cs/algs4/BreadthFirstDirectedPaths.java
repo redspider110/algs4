@@ -219,6 +219,9 @@ public class BreadthFirstDirectedPaths {
             }
 
         }
+        for (int i = 0; i < bfs.edgeTo.length; i++){
+            System.out.println("edgeTo[" + i + "] = " + bfs.edgeTo[i]);
+        }
     }
 
 

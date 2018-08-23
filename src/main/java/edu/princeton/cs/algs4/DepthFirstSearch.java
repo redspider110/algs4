@@ -20,6 +20,9 @@
 
 package edu.princeton.cs.algs4;
 
+import java.util.Iterator;
+import java.util.Stack;
+
 /**
  *  The {@code DepthFirstSearch} class represents a data type for 
  *  determining the vertices connected to a given source vertex <em>s</em>
@@ -40,6 +43,8 @@ package edu.princeton.cs.algs4;
  */
 public class DepthFirstSearch {
     private boolean[] marked;    // marked[v] = is there an s-v path?
+    private int[] parent;
+    private final int s;
     private int count;           // number of vertices connected to s
 
     /**
@@ -51,8 +56,11 @@ public class DepthFirstSearch {
      */
     public DepthFirstSearch(Graph G, int s) {
         marked = new boolean[G.V()];
+        parent = new int[G.V()];
         validateVertex(s);
-        dfs(G, s);
+        this.s = s;
+        //dfs(G, s);
+        dfs_non_recur(G, s);
     }
 
     // depth first search from v
@@ -61,9 +69,47 @@ public class DepthFirstSearch {
         marked[v] = true;
         for (int w : G.adj(v)) {
             if (!marked[w]) {
+                parent[w] = v;
                 dfs(G, w);
             }
         }
+    }
+
+    private void dfs_non_recur(Graph G, int v){
+        Iterator<Integer>[] adj = (Iterator<Integer>[]) new Iterator[G.V()];
+        for (int i = 0; i < G.V(); i++)
+            adj[i] = G.adj(i).iterator();
+
+        Stack<Integer> stack = new Stack<>();
+        marked[v] = true;
+        stack.push(v);
+        while (!stack.isEmpty()) {
+            int node = stack.peek();
+            if (adj[node].hasNext()) {
+                int w = adj[node].next();
+                if (!marked[w]) {
+                    // discovered vertex w for the first time
+                    marked[w] = true;
+                    parent[w] = node;
+                    stack.push(w);
+                    StdOut.printf("dfs(%d)\n", w);
+                }
+            }
+            else {
+                StdOut.printf("%d done\n", node);
+                stack.pop();
+            }
+        }
+    }
+
+    private Iterable<Integer> pathTo(int v){
+        if (!marked[v]) return null;
+        Stack<Integer> paths = new Stack<>();
+        for (int x = v; x != s; x = parent[x]){
+            paths.push(x);
+        }
+        paths.push(s);
+        return paths;
     }
 
     /**
@@ -110,6 +156,10 @@ public class DepthFirstSearch {
         StdOut.println();
         if (search.count() != G.V()) StdOut.println("NOT connected");
         else                         StdOut.println("connected");
+
+        for (int i = 0; i < search.parent.length; i++){
+            System.out.println("parent[" + i + "] = " + search.parent[i]);
+        }
     }
 
 }

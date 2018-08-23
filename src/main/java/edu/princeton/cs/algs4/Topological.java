@@ -28,6 +28,10 @@
 
 package edu.princeton.cs.algs4;
 
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
 /**
  *  The {@code Topological} class represents a data type for 
  *  determining a topological order of a directed acyclic graph (DAG).
@@ -70,11 +74,37 @@ public class Topological {
         if (!finder.hasCycle()) {
             DepthFirstOrder dfs = new DepthFirstOrder(G);
             order = dfs.reversePost();
+            //order = topologicalSort(G);
             rank = new int[G.V()];
             int i = 0;
             for (int v : order)
                 rank[v] = i++;
         }
+    }
+
+    private Iterable<Integer> topologicalSort(Digraph G){
+        int[] inDegree = new int[G.V()];
+        Queue<Integer> zeroInDegreeQueue = new LinkedList<>();
+        Queue<Integer> order = new LinkedList<>();
+        for (int v = 0; v < G.V(); v++){
+            inDegree[v] = G.indegree(v);
+            if (inDegree[v] == 0){
+                zeroInDegreeQueue.offer(v);
+            }
+        }
+
+        while (!zeroInDegreeQueue.isEmpty()){
+            int node = zeroInDegreeQueue.poll();
+            order.offer(node);
+            for (int v : G.adj(node)) {
+                inDegree[v]--;
+                if (inDegree[v] == 0) {
+                    zeroInDegreeQueue.offer(v);
+                }
+            }
+        }
+
+        return order;
     }
 
     /**

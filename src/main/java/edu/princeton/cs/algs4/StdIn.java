@@ -593,7 +593,7 @@ public final class StdIn {
         setScanner(new Scanner(new java.io.BufferedInputStream(System.in), CHARSET_NAME));
     }
     
-    private static void setScanner(Scanner scanner) {
+    public static void setScanner(Scanner scanner) {
         StdIn.scanner = scanner;
         StdIn.scanner.useLocale(LOCALE);
     }

@@ -50,6 +50,11 @@ test-output
 
 .idea_modules/
 
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+/.idea
+
 # JIRA plugin
 atlassian-ide-plugin.xml
 

@@ -61,7 +61,8 @@ public class TarjanSCC {
     private int pre;                 // preorder number counter
     private int count;               // number of strongly-connected components
     private Stack<Integer> stack;
-
+    private int[] dfn;
+    private boolean[] onStack;
 
     /**
      * Computes the strong components of the digraph {@code G}.
@@ -72,8 +73,11 @@ public class TarjanSCC {
         stack = new Stack<Integer>();
         id = new int[G.V()]; 
         low = new int[G.V()];
+        dfn = new int[G.V()];
+        onStack = new boolean[G.V()];
         for (int v = 0; v < G.V(); v++) {
-            if (!marked[v]) dfs(G, v);
+            //if (!marked[v]) dfs(G, v);
+            if (!marked[v]) tarjan(G, v);
         }
 
         // check that id[] gives strong components
@@ -97,10 +101,37 @@ public class TarjanSCC {
         do {
             w = stack.pop();
             id[w] = count;
-            low[w] = G.V();
+            //low[w] = G.V();
         } while (w != v);
         count++;
     }
+
+    private void tarjan(Digraph G, int v){
+        marked[v] = true;
+        dfn[v] = low[v] = pre++;
+        stack.push(v);
+        onStack[v] = true;
+        for (int w : G.adj(v)){
+            if (!marked[w]) {
+                tarjan(G, w);
+                if (low[v] > low[w])
+                    low[v] = low[w];
+            } else if (onStack[w] && low[v] > dfn[w]){
+                low[v] = dfn[w];
+            }
+        }
+
+        if (dfn[v] == low[v]){
+            int w;
+            do {
+                w = stack.pop();
+                onStack[w] = false;
+                id[w] = count;
+            } while (w != v);
+            count++;
+        }
+    }
+
 
 
     /**

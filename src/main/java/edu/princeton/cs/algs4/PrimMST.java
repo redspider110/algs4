@@ -38,6 +38,9 @@
 
 package edu.princeton.cs.algs4;
 
+import java.util.PriorityQueue;
+import java.util.function.DoubleUnaryOperator;
+
 /**
  *  The {@code PrimMST} class represents a data type for computing a
  *  <em>minimum spanning tree</em> in an edge-weighted graph.
@@ -72,6 +75,8 @@ public class PrimMST {
     private double[] distTo;      // distTo[v] = weight of shortest such edge
     private boolean[] marked;     // marked[v] = true if v on tree, false otherwise
     private IndexMinPQ<Double> pq;
+    private PriorityQueue<Edge> jpq;
+    private Double weight;
 
     /**
      * Compute a minimum spanning tree (or forest) of an edge-weighted graph.
@@ -82,12 +87,16 @@ public class PrimMST {
         distTo = new double[G.V()];
         marked = new boolean[G.V()];
         pq = new IndexMinPQ<Double>(G.V());
+        jpq = new PriorityQueue<>();
+        weight = 0.0;
         for (int v = 0; v < G.V(); v++)
             distTo[v] = Double.POSITIVE_INFINITY;
 
         for (int v = 0; v < G.V(); v++)      // run from each vertex to find
-            if (!marked[v]) prim(G, v);      // minimum spanning forest
+            //if (!marked[v]) prim(G, v);      // minimum spanning forest
+            if (!marked[v]) nPrim(G, v);      // minimum spanning forest
 
+        System.out.println("weight = " + weight);
         // check optimality conditions
         assert check(G);
     }
@@ -113,6 +122,41 @@ public class PrimMST {
                 edgeTo[w] = e;
                 if (pq.contains(w)) pq.decreaseKey(w, distTo[w]);
                 else                pq.insert(w, distTo[w]);
+            }
+        }
+    }
+
+    // use java.util.PriorityQueue
+    private void nPrim(EdgeWeightedGraph G, int s){
+        distTo[s] = 0.0;
+        nScan(G, s);
+
+        while (!jpq.isEmpty()){
+            Edge e = jpq.poll();
+            int v = e.either(), w = e.other(v);        // two endpoints
+            //assert marked[v] || marked[w];
+            //if (marked[v] && marked[w]) continue;      // lazy, both v and w already scanned
+
+            weight += e.weight();
+            //if (!marked[v]) nScan(G, v);               // v becomes part of tree
+            //if (!marked[w]) nScan(G, w);               // w becomes part of tree
+            if (marked[v]) nScan(G, w);
+            else nScan(G, v);
+        }
+    }
+
+    private void nScan(EdgeWeightedGraph G, int v) {
+        marked[v] = true;
+        for (Edge e : G.adj(v)) {
+            int w = e.other(v);
+            if (marked[w]) continue;         // v-w is obsolete edge
+
+            if (e.weight() < distTo[w]) {
+                distTo[w] = e.weight();
+                if (jpq.contains(edgeTo[w])) jpq.remove(edgeTo[w]);
+                edgeTo[w] = e;
+                // update PQ: e
+                jpq.offer(edgeTo[w]);
             }
         }
     }

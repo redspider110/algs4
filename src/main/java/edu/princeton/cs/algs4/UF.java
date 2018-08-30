@@ -24,6 +24,12 @@
 package edu.princeton.cs.algs4;
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 /**
  *  The {@code UF} class represents a <em>union–find data type</em>
  *  (also known as the <em>disjoint-sets data type</em>).
@@ -127,13 +133,37 @@ public class UF {
      * @return the component identifier for the component containing site {@code p}
      * @throws IllegalArgumentException unless {@code 0 <= p < n}
      */
-    public int find(int p) {
+    public int findHalf(int p) {
         validate(p);
         while (p != parent[p]) {
             parent[p] = parent[parent[p]];    // path compression by halving
             p = parent[p];
         }
         return p;
+    }
+
+    public int findRecur(int p){
+        if (p != parent[p]){
+            parent[p] = findRecur(parent[p]);
+        }
+        return parent[p];
+    }
+
+    public int find(int p) {
+        int r = p, t;
+
+        // r: root node.
+        while (parent[r] != r)
+            r = parent[r];
+
+        // path compression
+        while (parent[p] != r) {
+            t = parent[p];
+            parent[p] = r;
+            p = t;
+        }
+
+        return r;
     }
 
     /**
@@ -201,6 +231,13 @@ public class UF {
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
+        if (args != null && args[0] != null){
+            try {
+                StdIn.setScanner(new Scanner(new File(args[0])));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
         int n = StdIn.readInt();
         UF uf = new UF(n);
         while (!StdIn.isEmpty()) {
@@ -209,6 +246,14 @@ public class UF {
             if (uf.connected(p, q)) continue;
             uf.union(p, q);
             StdOut.println(p + " " + q);
+        }
+        int maxRank = 0;
+        for (int rank : uf.rank){
+            if (rank > maxRank) maxRank = rank;
+        }
+        List<Integer> list = new ArrayList<>();
+        for (int parent : uf.parent){
+            if (!list.contains(parent)) list.add(parent);
         }
         StdOut.println(uf.count() + " components");
     }

@@ -139,6 +139,59 @@ public class KMP {
         return n;                    // not found
     }
 
+    public KMP(){
+        this.R = 256;
+    }
+
+    private int next[];
+    private void KMPCLRNext(String pattern) {
+        int m = pattern.length();
+        next = new int[m];
+        next[0] = -1;
+        int j = 0, k = -1;
+
+        while (j < m - 1) {
+            if (k == -1 || pattern.charAt(j) == pattern.charAt(k)) {
+                next[++j] = ++k;
+            } else {
+                k = next[k];
+            }
+        }
+
+        System.out.println("next[]: ");
+        System.out.print(" ");
+        for (int i = 0; i < m; i++){
+            System.out.print(pattern.charAt(i) + " ");
+        }
+        System.out.println("");
+        for (int i = 0; i < m; i++){
+            System.out.print(next[i] + " ");
+        }
+        System.out.println("");
+    }
+
+    private int KMPCLRSearch(String text, String pattern) {
+        KMPCLRNext(pattern);
+
+        int n = text.length();
+        int m = pattern.length();
+
+        int i = 0, j = 0;
+        while (i < n && j < m) {
+            if (j == -1 || text.charAt(i) == pattern.charAt(j)) {
+                i++;
+                j++;
+            } else {
+                j = next[j];
+            }
+        }
+
+        if (j == m)
+            return i - j;
+        else
+            return -1;
+    }
+
 
     /** 
      * Takes a pattern string and an input string as command-line arguments;
@@ -159,6 +212,9 @@ public class KMP {
         KMP kmp2 = new KMP(pattern, 256);
         int offset2 = kmp2.search(text);
 
+        KMP kmp3 = new KMP();
+        int offset3 = kmp3.KMPCLRSearch(txt, pat);
+
         // print results
         StdOut.println("text:    " + txt);
 
@@ -169,6 +225,11 @@ public class KMP {
 
         StdOut.print("pattern: ");
         for (int i = 0; i < offset2; i++)
+            StdOut.print(" ");
+        StdOut.println(pat);
+
+        StdOut.print("pattern: ");
+        for (int i = 0; i < offset3; i++)
             StdOut.print(" ");
         StdOut.println(pat);
     }

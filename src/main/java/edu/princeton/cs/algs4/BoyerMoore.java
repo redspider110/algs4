@@ -138,6 +138,135 @@ public class BoyerMoore {
         return n;                       // not found
     }
 
+    public BoyerMoore(){
+        this.R = 256;
+    }
+
+    private int bmBc[];
+    private int suffix[];
+    private int bmGs[];
+    private void preBmBc(String pattern){
+        bmBc = new int[R];
+        int m = pattern.length();
+
+        for (int i = 0; i < R; i++)
+            bmBc[i] = m;
+
+        for (int i = 0; i < m - 1; i++)
+            bmBc[pattern.charAt(i)] = m - i - 1;
+    }
+
+    private void preSuffix(String pattern){
+        int m = pattern.length();
+        suffix = new int[m];
+
+        int i = m - 1;
+        int f = i, g = i;
+
+        suffix[m - 1] = m;
+        for (i = m - 2; i >= 0; i--) {
+            if (i > g && suffix[i + m - 1 - f] < i - g)
+                suffix[i] = suffix[i + m - 1 - f];
+            else {
+                f = g = i;
+                while (g >= 0 && pattern.charAt(g) == pattern.charAt(m - 1 - i + g))
+                    g--;
+
+                suffix[i] = i - g;
+            }
+        }
+    }
+
+    private void preBmGs(String pattern){
+        preSuffix(pattern);
+        int m = pattern.length();
+        bmGs = new int[m];
+
+        for (int i = 0; i < m; i++)
+            bmGs[i] = m;
+
+        for (int i = m - 1; i >= 0; i--)
+            if (suffix[i] == i + 1)
+                for (int j = 0; j < m - 1 - i; j++)
+                    if (bmGs[j] == m)
+                        bmGs[j] = m - 1 - i;
+
+        for (int i = 0; i <= m - 2; i++)
+            bmGs[m - 1 - suffix[i]] = m - 1 - i;
+    }
+
+    private int max(int a, int b){
+        return (a > b) ? a : b;
+    }
+
+    private int bmOld(String pattern, String text){
+        /* Pre-processing */
+        preBmBc(pattern);
+        preBmGs(pattern);
+
+        /* Searching */
+        int j = 0, i = 0;
+        int n = text.length();
+        int m = pattern.length();
+        while (j <= n - m) {
+            for (i = m - 1; i >= 0 && pattern.charAt(i) == text.charAt(i + j); i--);
+
+            if (i < 0) {
+                // match success.
+                System.out.println("j = " + j);
+                // j += bmGs[0];
+                return j;
+            } else
+                j += max(bmGs[i], bmBc[text.charAt(i + j)] - m + 1 + i);
+        }
+
+        return n;
+    }
+
+    private int bm(String pattern, String text){
+        /* Pre-processing */
+        preBmBc(pattern);
+        preBmGs(pattern);
+
+        /* Searching */
+        int m = pattern.length();
+        int n = text.length();
+
+        int j = 0;
+        int i = m -1;
+
+        while (j <= n - m && i >= 0) {
+            if (pattern.charAt(i) == text.charAt(i + j)) {
+                i--;
+            } else {
+                j += max(bmGs[i], bmBc[text.charAt(i + j)] - m + 1 + i);
+                i = m - 1;
+            }
+        }
+
+        if (i < 0) return j;
+        return n;
+    }
+
+    private int bruteForce(String pattern, String text){
+        int m = pattern.length();
+        int n = text.length();
+
+        int j = 0;
+        int i = m - 1;
+
+        while (j <= n - m && i >= 0){
+            if (pattern.charAt(i) == text.charAt(i + j)) {
+                i--;
+            } else {
+                j++;
+                i = m - 1;
+            }
+        }
+
+        if (i < 0) return j;
+        return n;
+    }
 
     /**
      * Takes a pattern string and an input string as command-line arguments;
@@ -154,8 +283,12 @@ public class BoyerMoore {
 
         BoyerMoore boyermoore1 = new BoyerMoore(pat);
         BoyerMoore boyermoore2 = new BoyerMoore(pattern, 256);
+        BoyerMoore boyerMoore3 = new BoyerMoore();
+        BoyerMoore boyerMoore4 = new BoyerMoore();
         int offset1 = boyermoore1.search(txt);
         int offset2 = boyermoore2.search(text);
+        int offset3 = boyerMoore3.bm(pat, txt);
+        int offset4 = boyerMoore4.bruteForce(pat, txt);
 
         // print results
         StdOut.println("text:    " + txt);
@@ -167,6 +300,16 @@ public class BoyerMoore {
 
         StdOut.print("pattern: ");
         for (int i = 0; i < offset2; i++)
+            StdOut.print(" ");
+        StdOut.println(pat);
+
+        StdOut.print("pattern: ");
+        for (int i = 0; i < offset3; i++)
+            StdOut.print(" ");
+        StdOut.println(pat);
+
+        StdOut.print("pattern: ");
+        for (int i = 0; i < offset4; i++)
             StdOut.print(" ");
         StdOut.println(pat);
     }

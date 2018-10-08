@@ -4,7 +4,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
-// @Author: xmt
+/**
+ * @Author: xmt
+ * @Date: 2018/10/8
+ */
 public class BinaryTree {
     private Node root;
 
@@ -60,23 +63,25 @@ public class BinaryTree {
         }
     }
 
-    private void preOrderNonRecur(Node node){
-//        Method 1
-//        Stack<Node> stack = new Stack<>();
-//
-//        while (node != null || !stack.empty()){
-//            while (node != null){
-//                visit(node.value);
-//                stack.push(node);
-//                node = node.leftChild;
-//            }
-//
-//            if (!stack.empty()){
-//                node = stack.pop();
-//                node = node.rightChild;
-//            }
-//        }
+    private void preOrderNonRecur1(Node node){
+        // Method 1
+        Stack<Node> stack = new Stack<>();
 
+        while (node != null || !stack.empty()){
+            while (node != null){
+                visit(node.value);
+                stack.push(node);
+                node = node.leftChild;
+            }
+
+            if (!stack.empty()){
+                node = stack.pop();
+                node = node.rightChild;
+            }
+        }
+    }
+
+    private void preOrderNonRecur(Node node){
         // Method 2
         Stack<Node> stack = new Stack<>();
         stack.push(node);
@@ -94,23 +99,25 @@ public class BinaryTree {
         }
     }
 
-    private void inOrderNonRecur(Node node){
-//        Method 1.
-//        Stack<Node> stack = new Stack<>();
-//
-//        while (node != null || !stack.empty()){
-//            while (node != null){
-//                stack.push(node);
-//                node = node.leftChild;
-//            }
-//
-//            if (!stack.empty()){
-//                node = stack.pop();
-//                visit(node.value);
-//                node = node.rightChild;
-//            }
-//        }
+    private void inOrderNonRecur1(Node node){
+        // Method 1.
+        Stack<Node> stack = new Stack<>();
 
+        while (node != null || !stack.empty()){
+            while (node != null){
+                stack.push(node);
+                node = node.leftChild;
+            }
+
+            if (!stack.empty()){
+                node = stack.pop();
+                visit(node.value);
+                node = node.rightChild;
+            }
+        }
+    }
+
+    private void inOrderNonRecur(Node node){
         // Method 2
         Stack<Node> stack = new Stack<>();
         while (node != null || !stack.isEmpty()) {
@@ -125,7 +132,7 @@ public class BinaryTree {
         }
     }
 
-    private void postOrderNonRecur(Node node) {
+    private void postOrderNonRecur1(Node node) {
         Stack<Node> stack = new Stack<>();
         Node lastVisited = null;
 
@@ -156,7 +163,7 @@ public class BinaryTree {
         }
     }
 
-    private void postOrderNonRecur2(Node node){
+    private void postOrderNonRecur(Node node){
         Stack<Node> stack1 = new Stack<>();
         Stack<Node> stack2 = new Stack<>();
         stack1.add(node);
@@ -218,20 +225,28 @@ public class BinaryTree {
         System.out.println();
 
         // ---------- Non Recur ----------
+        System.out.print("preOrderNonRecur1: ");
+        binaryTree.preOrderNonRecur1(binaryTree.root);
+        System.out.println();
+
         System.out.print("preOrderNonRecur: ");
         binaryTree.preOrderNonRecur(binaryTree.root);
+        System.out.println();
+
+        System.out.print("inOrderNonRecur1: ");
+        binaryTree.inOrderNonRecur1(binaryTree.root);
         System.out.println();
 
         System.out.print("inOrderNonRecur: ");
         binaryTree.inOrderNonRecur(binaryTree.root);
         System.out.println();
 
-        System.out.print("postOrderNonRecur: ");
-        binaryTree.postOrderNonRecur(binaryTree.root);
+        System.out.print("postOrderNonRecur1: ");
+        binaryTree.postOrderNonRecur1(binaryTree.root);
         System.out.println();
 
-        System.out.print("postOrderNonRecur2: ");
-        binaryTree.postOrderNonRecur2(binaryTree.root);
+        System.out.print("postOrderNonRecur: ");
+        binaryTree.postOrderNonRecur(binaryTree.root);
         System.out.println();
 
         // --------- level ------------

@@ -1,3 +1,16 @@
+/**
+ * preOrderTraversal: ABDCEGFHI
+ * inOrderTraversal: DBAGECHFI
+ * postOrderTraversal: DBGEHIFCA
+ * preOrderNonRecur1: ABDCEGFHI
+ * preOrderNonRecur: ABDCEGFHI
+ * inOrderNonRecur1: DBAGECHFI
+ * inOrderNonRecur: DBAGECHFI
+ * postOrderNonRecur1: DBGEHIFCA
+ * postOrderNonRecur: DBGEHIFCA
+ * levelTraversal: ABCDEFGHI
+ */
+
 package edu.princeton.cs.algs4;
 
 import java.util.LinkedList;
@@ -253,6 +266,5 @@ public class BinaryTree {
         System.out.print("levelTraversal: ");
         binaryTree.levelTraversal(binaryTree.root);
         System.out.println();
-
     }
 }
